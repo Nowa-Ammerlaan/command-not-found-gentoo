@@ -48,19 +48,6 @@ def main():
     else:
         print(f"Command \"{cmd}\" not found]\n")
 
-    flatpak = "/usr/bin/flatpak"
-    if os.path.exists(flatpak):
-        try:
-            output = subprocess.check_output(
-                    [flatpak, "search", "--columns=name", cmd],
-                    stderr=subprocess.DEVNULL,
-                    universal_newlines=True)
-        except:
-            pass
-        else:
-            print("One of these flatpaks may be what you are looking for:")
-            print(output)
-
     spelling_candidates = []
     for word in similar_words(cmd):
         if shutil.which(word) is not None:
@@ -76,7 +63,7 @@ def main():
     except:
         pass
     else:
-        print(f"\nSearching the Portage File List for packages installing {cmd}...\n")
+        print(f"Searching the Portage File List for packages installing {cmd}...\n")
         found = False
         os_path = os.getenv("PATH")
         for path in os_path.split(":"):
