@@ -7,7 +7,7 @@
 command_not_found_handle () {
 	local runcnf=1
 	local retval=127
-	local cnf='/home/andrew/Git/client/bin/command-not-found'
+	local cnf='/home/andrew/Git/command-not-foud-gentoo/command-not-found'
 
 	# only search for the command if we're interactive
 	[[ $- == *"i"* ]] || runcnf=0
@@ -24,6 +24,8 @@ command_not_found_handle () {
 		retval=${?}
 	elif [[ -n "${BASH_VERSION-}" ]]; then
 		printf >&2 'bash: %s%s\n' "${1:+${1}: }" 'command not found'
+	elif [[ -n "${ZSH_VERSION-}" ]]; then
+		printf >&2 'zsh: %s%s\n' 'command not found: ' "${1}"
 	fi
 
 	# return success or failure
