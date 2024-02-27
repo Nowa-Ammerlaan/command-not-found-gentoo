@@ -66,8 +66,14 @@ def main():
     else:
         print(f"Searching the Portage File List for packages installing {cmd}...\n")
         found = False
-        os_path = os.getenv("PATH")
-        for path in os_path.split(":"):
+        paths = [
+                "/bin",
+                "/usr/bin",
+                "/sbin",
+                "/usr/sbin",
+                "/opt/bin"
+            ]
+        for path in paths:
             x = path + "/" + cmd
             try:
                 ret, out = e_file.e_file.run([x])
