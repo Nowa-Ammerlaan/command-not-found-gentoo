@@ -41,7 +41,7 @@ def main():
                     [snap, "advise-snap", "--command", cmd],
                     stderr=subprocess.DEVNULL,
                     universal_newlines=True)
-        except:
+        except Exception:
             print(f"\nCommand \"{cmd}\" not found\n\n")
         else:
             print(output)
@@ -59,25 +59,47 @@ def main():
             print("\t- " + candidate)
         print("\n")
 
+    paths = [
+            "/bin",
+            "/usr/bin",
+            "/sbin",
+            "/usr/sbin",
+            "/opt/bin"
+        ]
     try:
+        # Trying using e_file as module directly
         import e_file.e_file
-    except:
-        pass
+    except Exception:
+        # If that doesn't work call it via subprocess instead
+        e_file = "/usr/bin/e-file"
+        if os.path.exists(e_file):
+            print(f"Searching the Portage File List for packages installing {cmd}...\n")
+            found = False
+            for path in paths:
+                x = path + "/" + cmd
+                try:
+                    output = subprocess.check_output(
+                            [e_file, x],
+                            stderr=subprocess.DEVNULL,
+                            universal_newlines=True)
+                except Exception:
+                    # Unfortunatly there is no distinction in error code between fail and not found
+                    pass
+                else:
+                    found = True
+                    print(output)
+            if found:
+                print("")
+            else:
+                print("No candidates found\n\n")
     else:
         print(f"Searching the Portage File List for packages installing {cmd}...\n")
         found = False
-        paths = [
-                "/bin",
-                "/usr/bin",
-                "/sbin",
-                "/usr/sbin",
-                "/opt/bin"
-            ]
         for path in paths:
             x = path + "/" + cmd
             try:
                 ret, out = e_file.e_file.run([x])
-            except:
+            except Exception:
                 # If something is not working just quit
                 break
             else:
