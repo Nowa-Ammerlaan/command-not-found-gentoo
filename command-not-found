@@ -1,0 +1,96 @@
+#!/usr/bin/python3
+# Copyright 2024 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+#
+# Loosely inspired by Ubuntu/Debian's command-not-found
+# (c) Zygmunt Krynicki 2005, 2006, 2007, 2008
+
+
+import os
+import shutil
+import subprocess
+import sys
+
+import e_file.e_file
+
+
+def similar_words(word):
+    """
+    return a set with spelling1 distance alternative spellings
+
+    based on http://norvig.com/spell-correct.html
+    """
+    alphabet = 'abcdefghijklmnopqrstuvwxyz-_0123456789'
+    s = [(word[:i], word[i:]) for i in range(len(word) + 1)]
+    deletes = [a + b[1:] for a, b in s if b]
+    transposes = [a + b[1] + b[0] + b[2:] for a, b in s if len(b) > 1]
+    replaces = [a + c + b[1:] for a, b in s for c in alphabet if b]
+    inserts = [a + c + b for a, b in s for c in alphabet]
+    return set(deletes + transposes + replaces + inserts)
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Need at least one argument")
+        return
+
+    cmd = sys.argv[1]
+
+    snap = "/usr/bin/snap"
+    if os.path.exists(snap):
+        try:
+            output = subprocess.check_output(
+                    [snap, "advise-snap", "--command", cmd],
+                    stderr=subprocess.DEVNULL,
+                    universal_newlines=True)
+        except:
+            print(f"Command \"{cmd}\" not found\n")
+        else:
+            print(output)
+    else:
+        print(f"Command \"{cmd}\" not found]\n")
+
+    flatpak = "/usr/bin/flatpak"
+    if os.path.exists(flatpak):
+        try:
+            output = subprocess.check_output(
+                    [flatpak, "search", "--columns=name", cmd],
+                    stderr=subprocess.DEVNULL,
+                    universal_newlines=True)
+        except:
+            pass
+        else:
+            print("One of these flatpaks may be what you are looking for:")
+            print(output)
+
+    spelling_candidates = []
+    for word in similar_words(cmd):
+        if shutil.which(word) is not None:
+            spelling_candidates += [word]
+
+    if len(spelling_candidates) > 0:
+        print("Maybe you meant:")
+        for candidate in spelling_candidates:
+            print(candidate)
+
+    print(f"\nSearching the Portage File List for packages installing {cmd}...\n")
+    found = False
+    os_path = os.getenv("PATH")
+    for path in os_path.split(":"):
+        x = path + "/" + cmd
+        try:
+            ret, out = e_file.e_file.run([x])
+        except:
+            # If something is not working just quit
+            break
+        else:
+            if ret == 0:
+                found = True
+                print(out)
+
+    if not found:
+        print("No candidates found")
+
+
+if __name__ == "__main__":
+    main()
