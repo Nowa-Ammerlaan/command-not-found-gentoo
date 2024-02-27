@@ -41,7 +41,7 @@ def main():
                     [snap, "advise-snap", "--command", cmd],
                     stderr=subprocess.DEVNULL,
                     universal_newlines=True)
-        except Exception:
+        except subprocess.CalledProcessError:
             print(f"\nCommand \"{cmd}\" not found\n\n")
         else:
             print(output)
@@ -69,7 +69,7 @@ def main():
     try:
         # Trying using e_file as module directly
         import e_file.e_file
-    except Exception:
+    except ModuleNotFoundError:
         # If that doesn't work call it via subprocess instead
         e_file = "/usr/bin/e-file"
         if os.path.exists(e_file):
@@ -82,7 +82,7 @@ def main():
                             [e_file, x],
                             stderr=subprocess.DEVNULL,
                             universal_newlines=True)
-                except Exception:
+                except subprocess.CalledProcessError:
                     # Unfortunatly there is no distinction in error code between fail and not found
                     pass
                 else:
@@ -99,7 +99,7 @@ def main():
             x = path + "/" + cmd
             try:
                 ret, out = e_file.e_file.run([x])
-            except Exception:
+            except SystemExit:
                 # If something is not working just quit
                 break
             else:
