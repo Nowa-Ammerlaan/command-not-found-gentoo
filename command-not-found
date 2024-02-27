@@ -42,11 +42,11 @@ def main():
                     stderr=subprocess.DEVNULL,
                     universal_newlines=True)
         except:
-            print(f"Command \"{cmd}\" not found\n")
+            print(f"\nCommand \"{cmd}\" not found\n\n")
         else:
             print(output)
     else:
-        print(f"Command \"{cmd}\" not found]\n")
+        print(f"\nCommand \"{cmd}\" not found]\n\n")
 
     spelling_candidates = []
     for word in similar_words(cmd):
@@ -54,9 +54,10 @@ def main():
             spelling_candidates += [word]
 
     if len(spelling_candidates) > 0:
-        print("Maybe you meant:")
+        print("Maybe you meant one of these commands:")
         for candidate in spelling_candidates:
-            print(candidate)
+            print("\t- " + candidate)
+        print("\n")
 
     try:
         import e_file.e_file
@@ -76,10 +77,12 @@ def main():
             else:
                 if ret == 0:
                     found = True
-                    print(out)
+                    sys.stdout.write(out)
 
-        if not found:
-            print("No candidates found")
+        if found:
+            print("")
+        else:
+            print("No candidates found\n\n")
 
 
 if __name__ == "__main__":
