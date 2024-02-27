@@ -11,8 +11,6 @@ import shutil
 import subprocess
 import sys
 
-import e_file.e_file
-
 
 def similar_words(word):
     """
@@ -73,23 +71,28 @@ def main():
         for candidate in spelling_candidates:
             print(candidate)
 
-    print(f"\nSearching the Portage File List for packages installing {cmd}...\n")
-    found = False
-    os_path = os.getenv("PATH")
-    for path in os_path.split(":"):
-        x = path + "/" + cmd
-        try:
-            ret, out = e_file.e_file.run([x])
-        except:
-            # If something is not working just quit
-            break
-        else:
-            if ret == 0:
-                found = True
-                print(out)
+    try:
+        import e_file.e_file
+    except:
+        pass
+    else:
+        print(f"\nSearching the Portage File List for packages installing {cmd}...\n")
+        found = False
+        os_path = os.getenv("PATH")
+        for path in os_path.split(":"):
+            x = path + "/" + cmd
+            try:
+                ret, out = e_file.e_file.run([x])
+            except:
+                # If something is not working just quit
+                break
+            else:
+                if ret == 0:
+                    found = True
+                    print(out)
 
-    if not found:
-        print("No candidates found")
+        if not found:
+            print("No candidates found")
 
 
 if __name__ == "__main__":
