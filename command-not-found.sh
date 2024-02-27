@@ -7,7 +7,7 @@
 command_not_found_handle () {
 	local runcnf=1
 	local retval=127
-	local cnf='/home/andrew/Git/command-not-found-gentoo/command-not-found'
+	local cnf='/usr/bin/command-not-found'
 
 	# only search for the command if we're interactive
 	[[ $- == *"i"* ]] || runcnf=0
