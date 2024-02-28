@@ -46,7 +46,7 @@ def main():
         else:
             print(output)
     else:
-        print(f"\nCommand \"{cmd}\" not found]\n\n")
+        print(f"\nCommand \"{cmd}\" not found\n\n")
 
     spelling_candidates = []
     for word in similar_words(cmd):
