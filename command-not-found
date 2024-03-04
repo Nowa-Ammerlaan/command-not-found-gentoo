@@ -95,19 +95,25 @@ def main():
                 print("No candidates found\n\n")
     else:
         print(f"Searching the Portage File List for packages installing {cmd}...\n")
-        try:
-            options = {
-                'file': cmd
-            }
-            ret, out = pfl.e_file.run(options)
-            if ret == 0:
-                found = True
-                sys.stdout.write(out)
-                print("")
-        except SystemExit:
-            # If something is not working just quit
-            print("No candidates found\n\n")    
-
+        found = False
+        for path in paths:
+            x = path + "/" + cmd
+            try:
+                options = {
+                    'file': x
+                }
+                ret, out = pfl.e_file.run(options)
+            except SystemExit:
+                # If something is not working just quit
+                break
+            else:
+                if ret == 0:
+                    found = True
+                    sys.stdout.write(out)
+        if found:
+            print("")
+        else:
+            print("No candidates found\n\n")
 
 if __name__ == "__main__":
     main()
