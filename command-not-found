@@ -68,10 +68,10 @@ def main():
         ]
 
     try:
-        # Trying using e_file as module directly
+        # Trying using e_file as module directly (app-portage/pfl>3.4)
         import pfl.e_file
     except ModuleNotFoundError:
-        # If that doesn't work call it via subprocess instead
+        # If that doesn't work call it via subprocess instead (app-portage/pfl<=3.4)
         e_file = "/usr/bin/e-file"
         if os.path.exists(e_file):
             print(f"Searching the Portage File List for packages installing {cmd}...\n")
