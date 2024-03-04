@@ -66,9 +66,10 @@ def main():
             "/usr/sbin",
             "/opt/bin"
         ]
+
     try:
         # Trying using e_file as module directly
-        import e_file.e_file
+        import pfl.e_file
     except ModuleNotFoundError:
         # If that doesn't work call it via subprocess instead
         e_file = "/usr/bin/e-file"
@@ -98,7 +99,10 @@ def main():
         for path in paths:
             x = path + "/" + cmd
             try:
-                ret, out = e_file.e_file.run([x])
+                options = {
+                    'file': x
+                }
+                ret, out = pfl.e_file.run(options)
             except SystemExit:
                 # If something is not working just quit
                 break
@@ -106,12 +110,10 @@ def main():
                 if ret == 0:
                     found = True
                     sys.stdout.write(out)
-
         if found:
             print("")
         else:
             print("No candidates found\n\n")
-
 
 if __name__ == "__main__":
     main()
