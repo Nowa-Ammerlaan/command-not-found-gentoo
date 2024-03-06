@@ -6,7 +6,54 @@ This repository contains a simple shell script that defines `command_not_found_h
 - suggest commands that do exist and closely match the non-existing command
 - search the [Portage File List](https://www.portagefilelist.de/) for packages that install the non-existing command if `app-portage/pfl` is installed
 
+## Installation
+
 To install it simply `emerge app-portage/command-not-found`, and optionally install `app-containers/snapd` and/or `app-portage/pfl` as well.
+Next follow the steps for you shell of choice:
+
+### Bash
+
+`command-not-found` is automatically setup in `app-shells/bash` for all interactive sessions via `/etc/bash/bashrc.d/command-not-found.sh`, no manual action is required.
+
+### Zsh
+
+To use `command-not-found` in `app-shells/zsh`, add the following to your `/etc/zsh/zshrc` (for all users) or `~/.zshrc` (just for you):
+
+```
+source /etc/bash/bashrc.d/command-not-found.sh
+```
+
+### Fish
+
+To use `command-not-found` in `app-shells/fish`, add the following to your `~/.config/fish/config.fish`:
+
+```
+function fish_command_not_found
+    /usr/bin/command-not-found $argv
+end
+```
+
+### Nushell
+
+To use `command-not-found` in `app-shells/nushell`, edit your `~/.config/nushell/config.nu` as described below:
+
+```
+$env.config = {
+    ...other config...
+
+    hooks: {
+        ...other hooks...
+
+        command_not_found: {
+            |cmd_name| (
+                try {
+                    /usr/bin/command-not-found $cmd_name
+                }
+            )
+        }
+    }
+}
+```
 
 ## Example output:
 
