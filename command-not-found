@@ -100,7 +100,8 @@ def main():
             x = path + "/" + cmd
             try:
                 options = {
-                    'file': x
+                    'file': x,
+                    'outputPlain': False,
                 }
                 ret, out = pfl.e_file.run(options)
             except SystemExit:
