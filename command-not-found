@@ -121,6 +121,7 @@ def main():
                 options = {
                     'file': x,
                     'outputPlain': False,
+                    'packageSearch': False
                 }
                 ret, out = pfl.e_file.run(options)
             except SystemExit:
