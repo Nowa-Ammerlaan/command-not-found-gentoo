@@ -10,7 +10,7 @@ command_not_found_handle () {
 	local cnf='/usr/bin/command-not-found'
 
 	# only search for the command if we're interactive
-	[[ $- == *"i"* ]] || runcnf=0
+	[[ ${-} == *"i"* ]] || runcnf=0
 
 	# don't run if bash command completion is being run
 	[[ -n ${COMP_CWORD-} ]] && runcnf=0
@@ -34,6 +34,6 @@ command_not_found_handle () {
 
 if [[ -n "${ZSH_VERSION-}" ]]; then
 	command_not_found_handler () {
-		command_not_found_handle "$@"
+		command_not_found_handle "${@}"
 	}
 fi

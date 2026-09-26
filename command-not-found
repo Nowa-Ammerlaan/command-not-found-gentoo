@@ -34,6 +34,25 @@ def main():
 
     cmd = sys.argv[1]
 
+    # Sanity check to avoid spamming pfl with nonsense. A valid command
+    # contains letters and may contain numbers, but it may not contain only
+    # numbers. ".-_" in commands are allowed, but not at the begining or end.
+    allow_list = ".-_"
+    allowed_char_at_illegal_pos = False
+    cmd_cleaned = cmd
+    for char in allow_list:
+        cmd_cleaned = cmd_cleaned.replace(char, "")
+        if cmd.startswith(char) or cmd.endswith(char):
+            allowed_char_at_illegal_pos = True
+
+    if (
+            not cmd_cleaned.isalnum() or
+            cmd_cleaned.isnumeric() or
+            allowed_char_at_illegal_pos
+            ):
+        print(f"\nCommand \"{cmd}\" does not look like a valid command\n")
+        return
+
     snap = "/usr/bin/snap"
     if os.path.exists(snap):
         try:
@@ -68,10 +87,10 @@ def main():
         ]
 
     try:
-        # Trying using e_file as module directly
+        # Trying using e_file as module directly (app-portage/pfl>3.4)
         import pfl.e_file
     except ModuleNotFoundError:
-        # If that doesn't work call it via subprocess instead
+        # If that doesn't work call it via subprocess instead (app-portage/pfl<=3.4)
         e_file = "/usr/bin/e-file"
         if os.path.exists(e_file):
             print(f"Searching the Portage File List for packages installing {cmd}...\n")
@@ -100,7 +119,8 @@ def main():
             x = path + "/" + cmd
             try:
                 options = {
-                    'file': x
+                    'file': x,
+                    'outputPlain': False,
                 }
                 ret, out = pfl.e_file.run(options)
             except SystemExit:
@@ -116,4 +136,7 @@ def main():
             print("No candidates found\n\n")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt as e:
+        pass
