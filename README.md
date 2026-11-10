@@ -63,7 +63,7 @@ $env.config = {
 
 A typo on the command line:
 ```
-andrew@andrew-gentoo-laptop ~ $ szh
+user@hostname ~ $ szh
 
 Command "szh" not found
 
@@ -82,7 +82,7 @@ No candidates found
 
 Trying to execute a command that is not installed, but is available in portage:
 ```
-andrew@andrew-gentoo-laptop ~ $ radeontop
+user@hostname ~ $ radeontop
 
 Command "radeontop" not found
 
@@ -109,7 +109,7 @@ Matched Files:          /usr/sbin/radeontop
 
 Trying to execute a command that is not installed, but is available both in portage and as a snap:
 ```
-andrew@andrew-gentoo-laptop ~ $ audacity
+user@hostname ~ $ audacity
 
 Command "audacity" not found, but can be installed with:
 
